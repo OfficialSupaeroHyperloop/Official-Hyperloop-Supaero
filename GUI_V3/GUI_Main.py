@@ -13,7 +13,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QPixmap
 import sys
-import sip
+# import sip
 import os
 #import pyqtgraph as pg
 #from pyqtgraph import PlotWidget, plot
@@ -169,23 +169,199 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.totalTimerLCD.setObjectName("totalTimerLCD")
 
         self.label_Logo = QtWidgets.QLabel(self.centralwidget)
-        self.pixmap = QPixmap('./HyperloopLabel.png').scaled(320, 200, QtCore.Qt.KeepAspectRatio,QtCore.Qt.SmoothTransformation) #Remember to add your own path
+        self.pixmap = QPixmap('GUI_V3\HyperloopLabel.png').scaled(820, 200, QtCore.Qt.KeepAspectRatio,QtCore.Qt.SmoothTransformation) #Remember to add your own path
         self.label_Logo.setPixmap(self.pixmap)
-        self.label_Logo.setGeometry(QtCore.QRect(5, 450, 900, 500))
+        self.label_Logo.setGeometry(QtCore.QRect(400, 650, 900, 500))
 
         #HVAL Status
         self.HVALStateLabel = QtWidgets.QLabel(self.centralwidget)
-        self.HVALStateLabel.setGeometry(QtCore.QRect(10, 100, 171, 25))
-        self.HVALStateLED = QtWidgets.QLabel(self.centralwidget)
+        self.HVALStateLabel.setGeometry(QtCore.QRect(10, 220, 171, 25))
 
         self.HVALStateLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.HVALStateLabel.setFont(font)
         self.HVALStateLabel.setObjectName("HVALStateLabel")
-        self.HVALStateLabel.setStyleSheet("background-color: white;")
+        self.HVALStateLabel.setStyleSheet("background-color: grey;")
 
-        self.HVALred = QPixmap('HVALred.png')
-        self.HVALStateLED.setPixmap(self.HVALred)
-        self.HVALStateLED.setGeometry(10,450,150,150)
+        self.HVALStateLED = QtWidgets.QLabel(self.centralwidget)
+        self.HVALredPixmap = QPixmap("GUI_V3\images\HVALred.png").scaled(171, 171, QtCore.Qt.KeepAspectRatio,QtCore.Qt.SmoothTransformation)
+        self.HVALStateLED.setPixmap(self.HVALredPixmap)
+        self.HVALStateLED.setGeometry(QtCore.QRect(10, 270, 171, 171))
+
+        #IMD Status
+        self.IMDStateLabel = QtWidgets.QLabel(self.centralwidget)
+        self.IMDStateLabel.setGeometry(QtCore.QRect(201, 220, 171, 25))
+
+        self.IMDStateLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.IMDStateLabel.setFont(font)
+        self.IMDStateLabel.setObjectName("IMDStateLabel")
+        self.IMDStateLabel.setStyleSheet("background-color: grey;")
+
+        self.IMDStateLED = QtWidgets.QLabel(self.centralwidget)
+        self.IMDredPixmap = QPixmap("GUI_V3\images\HVALred.png").scaled(171, 171, QtCore.Qt.KeepAspectRatio,QtCore.Qt.SmoothTransformation)
+        self.IMDStateLED.setPixmap(self.IMDredPixmap)
+        self.IMDStateLED.setGeometry(QtCore.QRect(201, 270, 171, 171))
+
+        #BMS HV Status
+        self.BMSHVStatusLabel = QtWidgets.QLabel(self.centralwidget)
+        self.BMSHVStatusLabel.setGeometry(QtCore.QRect(10, 481, 181, 25))
+
+        self.BMSHVStatusLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.BMSHVStatusLabel.setFont(font)
+        self.BMSHVStatusLabel.setObjectName("BMSHVStatusLabel")
+        self.BMSHVStatusLabel.setStyleSheet("background-color: grey;")
+
+        #BMS HV Labels
+        self.PackVoltageLabel = QtWidgets.QLabel(self.centralwidget)
+        self.PackVoltageLabel.setGeometry(QtCore.QRect(10, 516, 170, 25))
+        self.PackVoltageLabel.setObjectName("PackVoltageLabel")
+        self.PackVoltageLabel.setStyleSheet("background-color: white;")
+
+        self.MaximumCellVoltageLabel = QtWidgets.QLabel(self.centralwidget)
+        self.MaximumCellVoltageLabel.setGeometry(QtCore.QRect(10, 546, 170, 25))
+        self.MaximumCellVoltageLabel.setObjectName("MaximumCellVoltageLabel")
+        self.MaximumCellVoltageLabel.setStyleSheet("background-color: white;")
+
+        self.MinimumCellVoltageLabel = QtWidgets.QLabel(self.centralwidget)
+        self.MinimumCellVoltageLabel.setGeometry(QtCore.QRect(10, 576, 170, 25))
+        self.MinimumCellVoltageLabel.setObjectName("MinimumCellVoltageLabel")
+        self.MinimumCellVoltageLabel.setStyleSheet("background-color: white;")
+
+        self.MaximumCellTempLabel = QtWidgets.QLabel(self.centralwidget)
+        self.MaximumCellTempLabel.setGeometry(QtCore.QRect(10, 606, 170, 25))
+        self.MaximumCellTempLabel.setObjectName("MaximumCellTempLabel")
+        self.MaximumCellTempLabel.setStyleSheet("background-color: white;")
+
+        self.MinimumCellTempLabel = QtWidgets.QLabel(self.centralwidget)
+        self.MinimumCellTempLabel.setGeometry(QtCore.QRect(10, 636, 170, 25))
+        self.MinimumCellTempLabel.setObjectName("MinimumCellTempLabel")
+        self.MinimumCellTempLabel.setStyleSheet("background-color: white;")
+
+        self.PackCurrentLabel = QtWidgets.QLabel(self.centralwidget)
+        self.PackCurrentLabel.setGeometry(QtCore.QRect(10, 666, 170, 25))
+        self.PackCurrentLabel.setObjectName("PackCurrentLabel")
+        self.PackCurrentLabel.setStyleSheet("background-color: white;")
+
+        #BMS HV Readings
+        self.PackVoltageReading = QtWidgets.QTextBrowser(self.centralwidget)
+        self.PackVoltageReading.setGeometry(QtCore.QRect(200, 516, 101, 25))
+        self.PackVoltageReading.setObjectName("PackVoltageReading")
+        self.PackVoltageReading.setStyleSheet("background-color: white;")
+
+        self.MaximumCellVoltageReading = QtWidgets.QTextBrowser(self.centralwidget)
+        self.MaximumCellVoltageReading.setGeometry(QtCore.QRect(QtCore.QRect(200, 546, 101, 25)))
+        self.MaximumCellVoltageReading.setObjectName("PackVoltageReading")
+        self.MaximumCellVoltageReading.setStyleSheet("background-color: white;")
+
+        self.MinimumCellVoltageReading = QtWidgets.QTextBrowser(self.centralwidget)
+        self.MinimumCellVoltageReading.setGeometry(QtCore.QRect(QtCore.QRect(200, 576, 101, 25)))
+        self.MinimumCellVoltageReading.setObjectName("MinimumCellVoltageReading")
+        self.MinimumCellVoltageReading.setStyleSheet("background-color: white;")
+
+        self.MaximumCellTempReading = QtWidgets.QTextBrowser(self.centralwidget)
+        self.MaximumCellTempReading.setGeometry(QtCore.QRect(QtCore.QRect(200, 606, 101, 25)))
+        self.MaximumCellTempReading.setObjectName("MaximumCellTempReading")
+        self.MaximumCellTempReading.setStyleSheet("background-color: white;")
+
+        self.MinimumCellTempReading = QtWidgets.QTextBrowser(self.centralwidget)
+        self.MinimumCellTempReading.setGeometry(QtCore.QRect(QtCore.QRect(200, 636, 101, 25)))
+        self.MinimumCellTempReading.setObjectName("MinimumCellTempReading")
+        self.MinimumCellTempReading.setStyleSheet("background-color: white;")
+
+        self.PackCurrentReading = QtWidgets.QTextBrowser(self.centralwidget)
+        self.PackCurrentReading.setGeometry(QtCore.QRect(QtCore.QRect(200, 666, 101, 25)))
+        self.PackCurrentReading.setObjectName("PackCurrentReading")
+        self.PackCurrentReading.setStyleSheet("background-color: white;")
+
+        #BMS LV Status
+        # self.BMSLVStatusLabel = QtWidgets.QLabel(self.centralwidget)
+        # self.BMSLVStatusLabel.setGeometry(QtCore.QRect(10, 706, 181, 25))
+
+        # self.BMSLVStatusLabel.setAlignment(QtCore.Qt.AlignCenter)
+        # self.BMSLVStatusLabel.setFont(font)
+        # self.BMSLVStatusLabel.setObjectName("BMSHVStatusLabel")
+        # self.BMSLVStatusLabel.setStyleSheet("background-color: grey;")
+
+        #BMS LV Labels
+        # self.LPackVoltageLabel = QtWidgets.QLabel(self.centralwidget)
+        # self.LPackVoltageLabel.setGeometry(QtCore.QRect(10, 741, 170, 25))
+        # self.LPackVoltageLabel.setObjectName("LPackVoltageLabel")
+        # self.LPackVoltageLabel.setStyleSheet("background-color: white;")
+
+        # self.LMaximumCellVoltageLabel = QtWidgets.QLabel(self.centralwidget)
+        # self.LMaximumCellVoltageLabel.setGeometry(QtCore.QRect(10, 771, 170, 25))
+        # self.LMaximumCellVoltageLabel.setObjectName("LMaximumCellVoltageLabel")
+        # self.LMaximumCellVoltageLabel.setStyleSheet("background-color: white;")
+
+        # self.LMinimumCellVoltageLabel = QtWidgets.QLabel(self.centralwidget)
+        # self.LMinimumCellVoltageLabel.setGeometry(QtCore.QRect(10, 801, 170, 25))
+        # self.LMinimumCellVoltageLabel.setObjectName("LMinimumCellVoltageLabel")
+        # self.LMinimumCellVoltageLabel.setStyleSheet("background-color: white;")
+
+        # self.LMaximumCellTempLabel = QtWidgets.QLabel(self.centralwidget)
+        # self.LMaximumCellTempLabel.setGeometry(QtCore.QRect(10, 831, 170, 25))
+        # self.LMaximumCellTempLabel.setObjectName("LMaximumCellTempLabel")
+        # self.LMaximumCellTempLabel.setStyleSheet("background-color: white;")
+
+        # self.LMinimumCellTempLabel = QtWidgets.QLabel(self.centralwidget)
+        # self.LMinimumCellTempLabel.setGeometry(QtCore.QRect(10, 861, 170, 25))
+        # self.LMinimumCellTempLabel.setObjectName("LMinimumCellTempLabel")
+        # self.LMinimumCellTempLabel.setStyleSheet("background-color: white;")
+
+        # self.LPackCurrentLabel = QtWidgets.QLabel(self.centralwidget)
+        # self.LPackCurrentLabel.setGeometry(QtCore.QRect(10, 891, 170, 25))
+        # self.LPackCurrentLabel.setObjectName("LPackCurrentLabel")
+        # self.LPackCurrentLabel.setStyleSheet("background-color: white;")
+
+        #BMS LV Readings
+        # self.LPackVoltageReading = QtWidgets.QTextBrowser(self.centralwidget)
+        # self.LPackVoltageReading.setGeometry(QtCore.QRect(200, 741, 101, 25))
+        # self.LPackVoltageReading.setObjectName("LPackVoltageReading")
+        # self.LPackVoltageReading.setStyleSheet("background-color: white;")
+
+        # self.LMaximumCellVoltageReading = QtWidgets.QTextBrowser(self.centralwidget)
+        # self.LMaximumCellVoltageReading.setGeometry(QtCore.QRect(QtCore.QRect(200, 771, 101, 25)))
+        # self.LMaximumCellVoltageReading.setObjectName("LMaximumCellVoltageReading")
+        # self.LMaximumCellVoltageReading.setStyleSheet("background-color: white;")
+
+        # self.LMinimumCellVoltageReading = QtWidgets.QTextBrowser(self.centralwidget)
+        # self.LMinimumCellVoltageReading.setGeometry(QtCore.QRect(QtCore.QRect(200, 801, 101, 25)))
+        # self.LMinimumCellVoltageReading.setObjectName("LMinimumCellVoltageReading")
+        # self.LMinimumCellVoltageReading.setStyleSheet("background-color: white;")
+
+        # self.LMaximumCellTempReading = QtWidgets.QTextBrowser(self.centralwidget)
+        # self.LMaximumCellTempReading.setGeometry(QtCore.QRect(QtCore.QRect(200, 831, 101, 25)))
+        # self.LMaximumCellTempReading.setObjectName("LMaximumCellTempReading")
+        # self.LMaximumCellTempReading.setStyleSheet("background-color: white;")
+
+        # self.LMinimumCellTempReading = QtWidgets.QTextBrowser(self.centralwidget)
+        # self.LMinimumCellTempReading.setGeometry(QtCore.QRect(QtCore.QRect(200, 861, 101, 25)))
+        # self.LMinimumCellTempReading.setObjectName("LMinimumCellTempReading")
+        # self.LMinimumCellTempReading.setStyleSheet("background-color: white;")
+
+        # self.LPackCurrentReading = QtWidgets.QTextBrowser(self.centralwidget)
+        # self.LPackCurrentReading.setGeometry(QtCore.QRect(QtCore.QRect(200, 891, 101, 25)))
+        # self.LPackCurrentReading.setObjectName("LPackCurrentReading")
+        # self.LPackCurrentReading.setStyleSheet("background-color: white;")
+
+        #DC-Link Status
+        self.DCLinktatusLabel = QtWidgets.QLabel(self.centralwidget)
+        self.DCLinktatusLabel.setGeometry(QtCore.QRect(10, 706, 241, 25))
+
+        self.DCLinktatusLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.DCLinktatusLabel.setFont(font)
+        self.DCLinktatusLabel.setObjectName("DCLinktatusLabel")
+        self.DCLinktatusLabel.setStyleSheet("background-color: grey;")
+
+        #HV DC-Link Status Reading
+        self.DCLinkVoltageLabel = QtWidgets.QLabel(self.centralwidget)
+        self.DCLinkVoltageLabel.setGeometry(QtCore.QRect(10, 741, 170, 25))
+        self.DCLinkVoltageLabel.setObjectName("DCLinkVoltageLabel")
+        self.DCLinkVoltageLabel.setStyleSheet("background-color: white;")
+
+        self.DCLinkVoltageReading = QtWidgets.QTextBrowser(self.centralwidget)
+        self.DCLinkVoltageReading.setGeometry(QtCore.QRect(QtCore.QRect(200, 741, 101, 25)))
+        self.DCLinkVoltageReading.setObjectName("DCLinkVoltageReading")
+        self.DCLinkVoltageReading.setStyleSheet("background-color: white;")
 
         #Temperature Readings
 
@@ -338,7 +514,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         # Tab Options
         
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
-        self.tabWidget.setGeometry(QtCore.QRect(330, 220, 921, 601))
+        self.tabWidget.setGeometry(QtCore.QRect(400, 220, 921, 601))
         self.tabWidget.setObjectName("tabWidget")
         self.ModeTab = QtWidgets.QWidget()
         self.ModeTab.setObjectName("ModeTab")
@@ -447,7 +623,53 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.TimeTotalLabel.setText(_translate("MainWindow", "Time (total)"))
         self.TimeStateLabel.setText(_translate("MainWindow", "Time (state)"))
 
-        self.HVALStateLabel.setText(_translate("MainWindow", "HVAL"))
+        self.HVALStateLabel.setText(_translate("MainWindow", "HVAL Status"))
+        self.IMDStateLabel.setText(_translate("MainWindow", "IMD Status"))
+
+        self.BMSHVStatusLabel.setText(_translate("MainWindow", "BMS HV Status"))
+
+        self.PackVoltageLabel.setText(_translate("MainWindow", "Pack Voltage (V)"))
+        self.PackVoltageReading.setHtml(_translate("MainWindow", "15"))
+
+        self.MaximumCellVoltageLabel.setText(_translate("MainWindow", "Max. Cell Voltage (V)"))
+        self.MaximumCellVoltageReading.setHtml(_translate("MainWindow", "15"))
+
+        self.MinimumCellVoltageLabel.setText(_translate("MainWindow", "Min. Cell Voltage (V)"))
+        self.MinimumCellVoltageReading.setHtml(_translate("MainWindow", "15"))
+
+        self.MaximumCellTempLabel.setText(_translate("MainWindow", "Max. Cell Temp. (°C)"))
+        self.MaximumCellTempReading.setHtml(_translate("MainWindow", "15"))
+
+        self.MinimumCellTempLabel.setText(_translate("MainWindow", "Min. Cell Temp. (°C)"))
+        self.MinimumCellTempReading.setHtml(_translate("MainWindow", "15"))
+
+        self.PackCurrentLabel.setText(_translate("MainWindow", "Pack Current (A)"))
+        self.PackCurrentReading.setHtml(_translate("MainWindow", "15"))
+
+        self.DCLinktatusLabel.setText(_translate("MainWindow", "HV DC-Link Status"))
+        self.DCLinkVoltageLabel.setText(_translate("MainWindow", "Voltage (V)"))
+        self.DCLinkVoltageReading.setHtml(_translate("MainWindow", "15"))
+
+        # self.BMSLVStatusLabel.setText(_translate("MainWindow", "BMS LV Status"))
+
+        # self.LPackVoltageLabel.setText(_translate("MainWindow", "Pack Voltage (V)"))
+        # self.LPackVoltageReading.setHtml(_translate("MainWindow", "15"))
+
+        # self.LMaximumCellVoltageLabel.setText(_translate("MainWindow", "Max. Cell Voltage (V)"))
+        # self.LMaximumCellVoltageReading.setHtml(_translate("MainWindow", "15"))
+
+        # self.LMinimumCellVoltageLabel.setText(_translate("MainWindow", "Min. Cell Voltage (V)"))
+        # self.LMinimumCellVoltageReading.setHtml(_translate("MainWindow", "15"))
+
+        # self.LMaximumCellTempLabel.setText(_translate("MainWindow", "Max. Cell Temp. (°C)"))
+        # self.LMaximumCellTempReading.setHtml(_translate("MainWindow", "15"))
+
+        # self.LMinimumCellTempLabel.setText(_translate("MainWindow", "Min. Cell Temp. (°C)"))
+        # self.LMinimumCellTempReading.setHtml(_translate("MainWindow", "15"))
+
+        # self.LPackCurrentLabel.setText(_translate("MainWindow", "Pack Current (A)"))
+        # self.LPackCurrentReading.setHtml(_translate("MainWindow", "15"))
+
         
         self.PodTempLabel.setText(_translate("MainWindow", "Pod:"))
         self.PodTempReading.setHtml(_translate("MainWindow", "15"))
