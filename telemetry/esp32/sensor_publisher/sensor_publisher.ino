@@ -14,7 +14,7 @@
 #define WIFI_SSID "ferrohotspot"
 #define WIFI_PASSWORD "12123434"
 
-#define MQTT_HOST IPAddress(10, 212, 93, 39)
+#define MQTT_HOST IPAddress(10, 70, 4, 38)
 #define MQTT_PORT 1883
 #define MQTT_USER "sensor"
 #define MQTT_PASS "121234"
