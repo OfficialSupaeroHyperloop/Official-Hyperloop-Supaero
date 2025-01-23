@@ -12,7 +12,7 @@ if __name__ == '__main__':
     client.on_message = on_message
     client.on_publish = on_publish
 
-    client.connect("10.212.93.39", 1883, 60)
+    client.connect("10.70.4.38", 1883, 60)
 
     client.subscribe("sensor/distance", 1)
 
