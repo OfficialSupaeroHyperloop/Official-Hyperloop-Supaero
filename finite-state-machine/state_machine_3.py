@@ -251,9 +251,11 @@ for velocity.
 '''
 
 import queue
+import time
 import sys, os
 import threading
 import breaks_control
+import telemetry
 import simu #simulation of the hyperloop
 
 class StateMachine:
@@ -349,9 +351,6 @@ class StateMachine:
         other = simu.break_value
         if other is 10: 
             self.close_breaks_work = True 
-        
-        
-        #---------------------------------------- TODAY
 
         return self.open_breaks_work and self.close_breaks_work 
     
@@ -362,6 +361,18 @@ class StateMachine:
     
     def close_breaks(self): 
         breaks_control.close()
+
+        return None
+    
+
+    #see the conditions for this to be true 
+    def test_powercircuit(self): 
+        self.powercircuit_active = True
+        return self.powercircuit_active
+    
+    def test_telemetry(self):
+        telemetry.send_ack()
+        
 
         return None
 
