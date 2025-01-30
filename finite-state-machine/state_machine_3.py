@@ -253,6 +253,8 @@ for velocity.
 import queue
 import sys, os
 import threading
+import breaks_control
+import simu #simulation of the hyperloop
 
 class StateMachine:
     # Implementation of the state machine StateMachine.
@@ -283,9 +285,9 @@ class StateMachine:
         self.estop_button = None
 
         # Breaks
-        self.brakes_closed = None
-        self.open_breaks_work = None
-        self.close_breaks_work = None
+        self.brakes_closed = True
+        self.open_breaks_work = False
+        self.close_breaks_work = False
 
         # GUI 
         self.GUI_prearm = False
@@ -298,7 +300,7 @@ class StateMachine:
         # Enumeration of all states:
         self.__State = StateMachine.State
         self.__state_conf_vector_changed = None
-        self.__state_vector = self.__State.null_state
+        self.__current_state = self.__State.null_state
         
         # For timed statechart:
         self.timer_service = None
@@ -311,30 +313,59 @@ class StateMachine:
         self.distance = 0
         self.levitation_distance = 0
         self.__is_executing = False
+
+    #mine added 
+    def add_state_to_queue(self):
+        #adds current state to queue where the list of states passed by will be contained
+        self.in_event_queue =  queue.Queue(self.__current_state )
+        return None
     
     def is_active(self):
         # Checks if the state machine is active.
-        return self.__state_vector is not self.__State.null_state
+        return self.__current_state is not self.__State.null_state
             
     def low_power_circuit_active(self):
         # Read heartbeats from all low power circuit components 
-        # GPIO pins -- figure out later 
+        # GPIO pins -- figure out later
+        #---------------------------------------- TODAY
         return True
     
-    def test_breaks(self):
+    def test_breaks(self, other): #use predetermined value for now 
         # Resting position is closed 
+        # Close, check that it closed(engage breaks) and then open and check that it opened(release breaks)
 
-        # Open, check that it opened and then release and check that it was released 
-        # - Send signal to open 
+        # - Send signal to open the breaks
         # - Read pressure sensors 
-        # - if open -> self.open_breaks_work = True 
+        # - if open ->  self.open_breaks_work = True  
+        self.open_breaks(self)
+        other = simu.break_value
+        if other is 4: 
+            self.open_breaks_work = True 
+
         # - Release 
-        #  - Read pressure sensors 
-        # - if closed ->  self.close_breaks_work = True 
+        # - Read pressure sensors 
+        # -if closed -> self.closed_breaks_work = True 
+        self.close_breaks(self)
+        other = simu.break_value
+        if other is 10: 
+            self.close_breaks_work = True 
+        
+        
+        #---------------------------------------- TODAY
 
         return self.open_breaks_work and self.close_breaks_work 
+    
+    def open_breaks(self): 
+        breaks_control.open()
 
-    def read_GUI(self): 
+        return None
+    
+    def close_breaks(self): 
+        breaks_control.close()
+
+        return None
+
+    def read_GUI(self, other): 
         # Read from GUI and fill all self.GUI ..... 
         # self.GUI_prearm = False
         # self.GUI_arm = False 
@@ -372,7 +403,7 @@ class StateMachine:
     
     def transition_ESTOP(self): 
         self.brakes_closed = True 
-        self.__state_vector = self.__State.main_estop 
+        self.__current_state  = self.__State.main_estop 
         # SHUTDOWN 
 
     def run_cycle(self):
@@ -384,13 +415,13 @@ class StateMachine:
             # Potentially read GUI here to detect stop stuff 
             self.read_GUI()
 
-            if self.__state_vector == self.__State.main_init: 
+            if self.__current_state  == self.__State.main_init: 
 
                 if self.breaks_work and self.powercircuit_active and self.telemetry_active:  # Some things are missing
-
+#put number to see if its working - gui
                     if self.GUI_prearm: 
                         self.brakes_closed = False 
-                        self.__state_vector = self.__State.main_prearm
+                        self.__current_state  = self.__State.main_prearm
 
                 else: 
                     if not init_timer_defined:
@@ -405,21 +436,21 @@ class StateMachine:
                     if not self.telemetry_active:
                         self.telemetry_active = self.is_telemetry_active() 
             
-            if self.__state_vector == self.__State.main_prearm:
+            if self.__current_state  == self.__State.main_prearm:
                 # The breaks are now open and the pod can be moved on the track. Once placed, the operator will 
                 # press the ARM button on the GUI and the transition will be made. 
                 if self.GUI_arm: 
                     # In the transition we will have to activate the navigation 
                     self.activate_state_estimator()
-                    self.__state_vector = self.__State.main_arm
+                    self.__current_state  = self.__State.main_arm
             
-            if self.__state_vector == self.__State.main_arm: 
+            if self.__current_state  == self.__State.main_arm: 
                 
                 # Double-check connections to sensors
                 if self.powercircuit_active and self.electro_magnetic_relays_open():
                     if self.GUI_launch: 
                         self.activate_propulsion()
-                        self.__state_vector = self.__State.main_launch
+                        self.__current_state  = self.__State.main_launch
                         
                 else:
                     if not init_timer_defined:
@@ -433,11 +464,11 @@ class StateMachine:
                     if not self.electro_magnetic_relays_open():            
                         self.electro_magnetic_relays_open = self.electro_magnetic_relays_open()
                         
-            if self.__state_vector == self.__State.main_launch:
+            if self.__current_state  == self.__State.main_launch:
                 #self.get_IMU_readings() if activate_propulsion() doesn't finally activate AND update
                 if self.velocity > 1:  # Placeholder for minimum threshold velocity in 30 seconds
                     # Make sure that control has full freedom to do its job from now on
-                    self.__state_vector = self.__State.main_push
+                    self.__current_state  = self.__State.main_push
                         
                 else:
                     if not init_timer_defined:
@@ -445,25 +476,25 @@ class StateMachine:
                         init_timer.start()
                         init_timer_defined = True
                 
-            if self.__state_vector == self.__State.main_push:
+            if self.__current_state  == self.__State.main_push:
                 # 5 m/s is current best estimation for the min. electromagnetic levitation velocity.
                 # 0.02 m is current best estimation for min. functional vertical levitation distance.
                 if (self.velocity >= 5) and (self.levitation_distance >= 0.02): 
-                    self.__state_vector = self.__State.main_coast 
+                    self.__current_state  = self.__State.main_coast 
                     
-            if self.__state_vector == self.__State.main_coast:
+            if self.__current_state  == self.__State.main_coast:
                 # Assuming constraints cannot be reached before this point 
                 # Implement safety and mission limit values
                 if (self.distance >= 40) or (self.velocity >= 15):
                     self.turnOff_propulsion()
                     self.brakes_closed = True
-                    self.__state_vector = self.__State.main_braking
+                    self.__current_state  = self.__State.main_braking
                     
-            if self.__state_vector == self.__State.main_braking:
+            if self.__current_state  == self.__State.main_braking:
                 if (self.velocity == 0) and self.GUI_shutdown:
                     self.brakes_closed = True
                     self.allow_Manual_Service_Disconnect()
-                    self.__state_vector = self.__State.main_shutdown
+                    self.__current_state  = self.__State.main_shutdown
                     
-            if self.__state_vector == self.__State.main_shutdown:
+            if self.__current_state  == self.__State.main_shutdown:
                 print("Mission success :)")
