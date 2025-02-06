@@ -18,6 +18,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+import state_bridge
 
 
 
@@ -56,6 +57,8 @@ class Ui_statesWindow(QtWidgets.QWidget):
         self.ui.PodModeReading.setText(TextButton)
         self.ui.LogHistoryBrowser.setText(log)
         
+        state_bridge.state.updateState(0,True)
+        
     def setDriveState(self,main_w,log):
         TextButton= self.DriveButton_DS.text()
         self.ui=main_w
@@ -85,6 +88,7 @@ class Ui_statesWindow(QtWidgets.QWidget):
         self.ui.PodModeReading.setText(TextButton)
         self.ui.LogHistoryBrowser.setText(log)
 
+        state_bridge.state.updateState(1,True)
         
     def setArmState(self,main_w,log):
         TextButton= self.ArmButton_FS.text()
@@ -99,6 +103,8 @@ class Ui_statesWindow(QtWidgets.QWidget):
                 
         self.ui.PodModeReading.setText(TextButton)
         self.ui.LogHistoryBrowser.setText(log)
+        
+        state_bridge.state.updateState(2,True)
 
 
     def setLaunchState(self,main_w,log):
@@ -115,6 +121,8 @@ class Ui_statesWindow(QtWidgets.QWidget):
                 
         self.ui.PodModeReading.setText(TextButton)
         self.ui.LogHistoryBrowser.setText(log)
+
+        state_bridge.state.updateState(3,True)
 
   
     def setFlightState(self,main_w,log):
