@@ -328,11 +328,11 @@ class StateMachine:
             
     def low_power_circuit_active(self):
         # Read heartbeats from all low power circuit components 
-        # GPIO pins -- figure out later
-        #---------------------------------------- TODAY
-        return True
+        simu.powerSim.activateLpc()
+
+        return simu.powerSim.getLpcVal()
     
-    def test_breaks(self, other): #use predetermined value for now 
+    def test_breaks(self): #use predetermined value for now 
         # Resting position is closed 
         # Close, check that it closed(engage breaks) and then open and check that it opened(release breaks)
 
@@ -340,39 +340,38 @@ class StateMachine:
         # - Read pressure sensors 
         # - if open ->  self.open_breaks_work = True  
         self.open_breaks(self)
-        other = simu.break_value
-        if other is 4: 
+        if simu.breakSim.getBreakVal() is 4: 
             self.open_breaks_work = True 
 
         # - Release 
         # - Read pressure sensors 
         # -if closed -> self.closed_breaks_work = True 
         self.close_breaks(self)
-        other = simu.break_value
-        if other is 10: 
+        if simu.breakSim.getBreakVal() is 10: 
             self.close_breaks_work = True 
 
         return self.open_breaks_work and self.close_breaks_work 
     
     def open_breaks(self): 
-        breaks_control.open()
+        # Sends signal to open breaks
+        simu.breakSim.openBreak()
 
         return None
     
     def close_breaks(self): 
-        breaks_control.close()
+       # Sends signal to close breaks
+        simu.breakSim.closeBreak()
 
         return None
-    
 
-    #see the conditions for this to be true 
+    # See the conditions for this to be true 
     def test_powercircuit(self): 
         self.powercircuit_active = True
         return self.powercircuit_active
     
-    def test_telemetry(self):
-        telemetry.send_ack()
-        
+    def is_telemetry_active(self):
+        # Send acknowledge message to test if telemetry is active
+        simu.telemetrySim.send_ack()
 
         return None
 
@@ -429,7 +428,7 @@ class StateMachine:
             if self.__current_state  == self.__State.main_init: 
 
                 if self.breaks_work and self.powercircuit_active and self.telemetry_active:  # Some things are missing
-#put number to see if its working - gui
+                #put number to see if its working - gui
                     if self.GUI_prearm: 
                         self.brakes_closed = False 
                         self.__current_state  = self.__State.main_prearm
