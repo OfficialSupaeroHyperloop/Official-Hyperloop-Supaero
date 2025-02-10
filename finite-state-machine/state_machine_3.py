@@ -257,6 +257,7 @@ import threading
 import breaks_control
 import telemetry
 import simu #simulation of the hyperloop
+import state_bridge
 
 class StateMachine:
     # Implementation of the state machine StateMachine.
@@ -292,6 +293,7 @@ class StateMachine:
         self.close_breaks_work = False
 
         # GUI 
+        self.GUI_init = False
         self.GUI_prearm = False
         self.GUI_arm = False 
         self.GUI_launch = False 
@@ -376,12 +378,13 @@ class StateMachine:
         return None
 
     def read_GUI(self, other): 
-        # Read from GUI and fill all self.GUI ..... 
-        # self.GUI_prearm = False
-        # self.GUI_arm = False 
-        # self.GUI_launch = False 
-        # self.GUI_estop = False 
-        # self.GUI_shutdown = False; 
+        # Read from GUI and fill all self.GUI .....
+        self.GUI_init = False
+        self.GUI_prearm = False
+        self.GUI_arm = False 
+        self.GUI_launch = False 
+        self.GUI_estop = False 
+        self.GUI_shutdown = False; 
         return 0 
 
     def electro_magnetic_relays_open(self):

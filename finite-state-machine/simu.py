@@ -42,3 +42,37 @@ class powerSim:
 
     def getLpcVal(self):
         return self.lpc_okay
+    
+class propSim:  
+    def computeAccel(self):
+        self.computedAccel= 0.000
+        self.accelCounter.setInterval(1000)
+        self.accelCounter.timeout.connect(self.setAccel)
+        self.accelCounter.start()
+
+    def computeVelocity(self):
+        self.computedVelocity= 0.000
+        self.velocityCounter.setInterval(1000)
+        self.velocityCounter.timeout.connect(self.setVelocity)
+        self.velocityCounter.start()
+
+    def computeDistance(self):
+        self.computedDistance= 0.000
+        self.distanceCounter.setInterval(1000)
+        self.distanceCounter.timeout.connect(self.setDistance)
+        self.distanceCounter.start()
+        
+    def setAccel(self):
+        self.computedAccel+=0.05
+        self.AccelReading.setText("{:.2f}".format(self.computedAccel))
+
+    def setVelocity(self):
+        self.computedVelocity += (self.computedAccel/20)
+        self.VelocityReading.setText("{:.2f}".format(self.computedVelocity))
+        self.velocities.append(self.computedVelocity)
+        self.timestamps.append(self.time)
+        # self.graphWidget.plot(self.timestamps, self.velocities)
+    
+    def setDistance(self):
+        self.computedDistance += 1.0
+        self.DistanceReading.setText("{:.2f}".format(self.computedDistance))
