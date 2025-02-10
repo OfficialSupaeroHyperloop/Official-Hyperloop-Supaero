@@ -254,10 +254,9 @@ import queue
 import time
 import sys, os
 import threading
-import breaks_control
-import telemetry
 import simu #simulation of the hyperloop
 import state_bridge
+from state_bridge import guistate
 
 class StateMachine:
     # Implementation of the state machine StateMachine.
@@ -276,7 +275,7 @@ class StateMachine:
             null_state
         ) = range(10)
     
-    def __init__(self):
+    def __init__(self, guistate):
         # Declares all necessary variables including list of states, histories etc. 
         self.brakes_closed = None
         self.pushing = None
@@ -293,12 +292,7 @@ class StateMachine:
         self.close_breaks_work = False
 
         # GUI 
-        self.GUI_init = False
-        self.GUI_prearm = False
-        self.GUI_arm = False 
-        self.GUI_launch = False 
-        self.GUI_estop = False 
-        self.GUI_shutdown = False 
+        self.gui_state = guistate
 
         self.in_event_queue = queue.Queue()
         # Enumeration of all states:
@@ -342,14 +336,14 @@ class StateMachine:
         # - Read pressure sensors 
         # - if open ->  self.open_breaks_work = True  
         self.open_breaks(self)
-        if simu.breakSim.getBreakVal() is 4: 
+        if simu.breakSim.getBreakVal() == 4: 
             self.open_breaks_work = True 
 
         # - Release 
         # - Read pressure sensors 
         # -if closed -> self.closed_breaks_work = True 
         self.close_breaks(self)
-        if simu.breakSim.getBreakVal() is 10: 
+        if simu.breakSim.getBreakVal() == 10: 
             self.close_breaks_work = True 
 
         return self.open_breaks_work and self.close_breaks_work 
@@ -377,15 +371,11 @@ class StateMachine:
 
         return None
 
-    def read_GUI(self, other): 
+    def read_GUI(self): 
         # Read from GUI and fill all self.GUI .....
-        self.GUI_init = False
-        self.GUI_prearm = False
-        self.GUI_arm = False 
-        self.GUI_launch = False 
-        self.GUI_estop = False 
-        self.GUI_shutdown = False; 
-        return 0 
+        self.__current_state = state_bridge.guistate.getStateInput(self.gui_state)
+        print(state_bridge.guistate.getStateInput(self.gui_state))
+        return 0
 
     def electro_magnetic_relays_open(self):
         # Ensure electromagnetic relays are open, current function is a placeholder

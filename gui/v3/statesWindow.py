@@ -57,7 +57,7 @@ class Ui_statesWindow(QtWidgets.QWidget):
         self.ui.PodModeReading.setText(TextButton)
         self.ui.LogHistoryBrowser.setText(log)
         
-        state_bridge.state.updateState(0,True)
+        state_bridge.state.updateState(self, 0,True)
         
     def setDriveState(self,main_w,log):
         TextButton= self.DriveButton_DS.text()
