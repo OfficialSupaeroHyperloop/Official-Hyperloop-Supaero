@@ -294,10 +294,9 @@ class StateMachine:
         # GUI 
         self.gui_state = guistate
 
-        self.in_event_queue = queue.Queue()
         # Enumeration of all states:
+        self.in_event_queue = queue.Queue()
         self.__State = StateMachine.State
-        self.__state_conf_vector_changed = None
         self.__current_state = self.__State.null_state
         
         # For timed statechart:
@@ -312,10 +311,10 @@ class StateMachine:
         self.levitation_distance = 0
         self.__is_executing = False
 
-    #mine added 
+    #Mary Optional to put as a list. If not then we could also delete the other variable abote (the queue)
     def add_state_to_queue(self):
         #adds current state to queue where the list of states passed by will be contained
-        self.in_event_queue =  queue.Queue(self.__current_state )
+        self.in_event_queue =  queue.Queue(self.__current_state)
         return None
     
     def is_active(self):
@@ -328,48 +327,56 @@ class StateMachine:
 
         return simu.powerSim.getLpcVal()
     
+    #-------------------------- BREAKS ----------------------------------------
     def test_breaks(self): #use predetermined value for now 
         # Resting position is closed 
         # Close, check that it closed(engage breaks) and then open and check that it opened(release breaks)
+
 
         # - Send signal to open the breaks
         # - Read pressure sensors 
         # - if open ->  self.open_breaks_work = True  
         self.open_breaks(self)
         if simu.breakSim.getBreakVal() == 4: 
-            self.open_breaks_work = True 
+            self.open_breaks_work = True
+        else:
+            self.open_breaks_work = False #just in case 
 
         # - Release 
         # - Read pressure sensors 
         # -if closed -> self.closed_breaks_work = True 
         self.close_breaks(self)
         if simu.breakSim.getBreakVal() == 10: 
-            self.close_breaks_work = True 
+            self.close_breaks_work = True
+        else:
+            self.close_breaks_work = False #just in case  
 
         return self.open_breaks_work and self.close_breaks_work 
     
     def open_breaks(self): 
-        # Sends signal to open breaks
+        # Sends signal to OPEN breaks
         simu.breakSim.openBreak()
 
         return None
     
     def close_breaks(self): 
-       # Sends signal to close breaks
+       # Sends signal to CLOSE breaks
         simu.breakSim.closeBreak()
 
         return None
 
+    #-------------------------- TELEMETRY ----------------------------------------
     # See the conditions for this to be true 
-    def test_powercircuit(self): 
+    def test_powercircuit(self):
+                                                                                                            #HOW DO WE TEST IF THE POWER CIRCUIT IS ACTIVE?
+                                                                                                            # through voltage diff from 0 
         self.powercircuit_active = True
         return self.powercircuit_active
     
     def is_telemetry_active(self):
-        # Send acknowledge message to test if telemetry is active
-        simu.telemetrySim.send_ack()
+        #receive telemetry status to see if its active
 
-        return None
+        return simu.telemetrySim.rec_telem_status()
 
     def read_GUI(self): 
         # Read from GUI and fill all self.GUI .....
@@ -379,19 +386,28 @@ class StateMachine:
 
     def electro_magnetic_relays_open(self):
         # Ensure electromagnetic relays are open, current function is a placeholder
+                                                                                                            #HOW DO WE TEST THIS? 
+                                                                                                            # voltage 0
         return True 
     
+
+    #-------------------------- PROPULSION ----------------------------------------
     def activate_propulsion(self):
         # Send order for motor to start working, activate motor and break control
-        self.pushing = True
+                                                                                                            #TO DO
+        self.pushing = True                                                                         #wait for the propulsion to us the pushing variable                                                                         
         return True
     
     def turnOff_propulsion(self):
-        # Turn off propulsion 
+        # Turn off propulsion
+                                                                                                            #SAME VARIABLES AS ABOVEEE
         self.pushing = False
         return True
     
+    #-------------------------- STATE, TIME AND DISCONNECT FEATURES ----------------------------------------
+    
     def activate_state_estimator(self):
+                                                                                                            #TO DO 
         # At minimum, activates IMU and sensor readings
         # Could also be in charge of updating sensor values after launch 
         # or another function could be written, whatever is more efficient
@@ -399,9 +415,12 @@ class StateMachine:
     
     def allow_Manual_Service_Disconnect(self):
         # This must turn off the pod yet also block the brakes open to be able to remove it
+                                                                                                            #go to emergency breaking/stop
+                                                                                                            #after that v = 0 we open the breaks. 
         return True
     
-    def init_timer_callback(self): 
+    def init_timer_callback(self):
+        #If out of time constraints, then something is wrong --> force going to ESTOP state
         self.transition_ESTOP()
     
     def transition_ESTOP(self): 
@@ -409,6 +428,10 @@ class StateMachine:
         self.__current_state  = self.__State.main_estop 
         # SHUTDOWN 
 
+        return None 
+
+
+#-------------------------- RUN CYCLE ----------------------------------------
     def run_cycle(self):
         # Implementation of run_cycle function.
         self.__is_executing = True 
@@ -421,10 +444,13 @@ class StateMachine:
             if self.__current_state  == self.__State.main_init: 
 
                 if self.breaks_work and self.powercircuit_active and self.telemetry_active:  # Some things are missing
+                                                                                                                                    # TO DOOOOO
                 #put number to see if its working - gui
-                    if self.GUI_prearm: 
+                    if self.GUI_prearm:                                                                                             
                         self.brakes_closed = False 
                         self.__current_state  = self.__State.main_prearm
+                        if init_timer_defined: 
+                            init_timer_defined = False #re-start the timer
 
                 else: 
                     if not init_timer_defined:
@@ -442,18 +468,21 @@ class StateMachine:
             if self.__current_state  == self.__State.main_prearm:
                 # The breaks are now open and the pod can be moved on the track. Once placed, the operator will 
                 # press the ARM button on the GUI and the transition will be made. 
+                                                                                                                                    # TO DOOOOOOOOO
                 if self.GUI_arm: 
-                    # In the transition we will have to activate the navigation 
+                    # In the transition we will have to activate the navigation                                                     # TO DO? what about the time here? 
                     self.activate_state_estimator()
                     self.__current_state  = self.__State.main_arm
             
             if self.__current_state  == self.__State.main_arm: 
                 
-                # Double-check connections to sensors
+                # Double-check connections to sensors                                                                               #TO DO? 
                 if self.powercircuit_active and self.electro_magnetic_relays_open():
                     if self.GUI_launch: 
                         self.activate_propulsion()
                         self.__current_state  = self.__State.main_launch
+                        if init_timer_defined: 
+                            init_timer_defined = False #re-start the timer
                         
                 else:
                     if not init_timer_defined:
@@ -472,6 +501,8 @@ class StateMachine:
                 if self.velocity > 1:  # Placeholder for minimum threshold velocity in 30 seconds
                     # Make sure that control has full freedom to do its job from now on
                     self.__current_state  = self.__State.main_push
+                    if init_timer_defined: 
+                            init_timer_defined = False #re-start the timer
                         
                 else:
                     if not init_timer_defined:
@@ -481,14 +512,15 @@ class StateMachine:
                 
             if self.__current_state  == self.__State.main_push:
                 # 5 m/s is current best estimation for the min. electromagnetic levitation velocity.
-                # 0.02 m is current best estimation for min. functional vertical levitation distance.
+                # 0.02 m is current best estimation for min. functional vertical levitation distance.                           #Add timer 
                 if (self.velocity >= 5) and (self.levitation_distance >= 0.02): 
-                    self.__current_state  = self.__State.main_coast 
+                    self.__current_state  = self.__State.main_coast                                                             #Ask propulsion the time it would take to reach that velocity
+                                                                                                                                #We need a condition for when the velocity is > this!!! To not hit the wall!!!
                     
             if self.__current_state  == self.__State.main_coast:
                 # Assuming constraints cannot be reached before this point 
-                # Implement safety and mission limit values
-                if (self.distance >= 40) or (self.velocity >= 15):
+                # Implement safety and mission limit values                                                                     #WHAT ABOUT TIMER
+                if (self.distance >= 40) or (self.velocity >= 15):                                                              #Same as aboveeeeeee
                     self.turnOff_propulsion()
                     self.brakes_closed = True
                     self.__current_state  = self.__State.main_braking

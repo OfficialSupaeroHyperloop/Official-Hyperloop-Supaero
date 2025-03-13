@@ -26,12 +26,12 @@ class breakSim:
     
 class telemetrySim:
     def __init__(self):
-        self.ack = False
+        self.telem_status = False
 
-    def sendAck(self):
-        self.ack = True
+    def rec_telem_status(self):
+        self.telem_status = True
 
-        return self.ack
+        return self.telem_status
 
 class powerSim:
     def __init__(self):
